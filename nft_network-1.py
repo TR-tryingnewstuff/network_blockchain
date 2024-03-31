@@ -14,10 +14,12 @@ from sklearn.preprocessing import OrdinalEncoder
 import networkx as nx
 import matplotlib.pyplot as plt
 import numpy as np
+import matplotlib.patches as mpatches
 #%%
 nft_collections = pd.read_csv('export-nft-top-contracts-1710592633736.csv')
 nft_collections
 
+#%%
 
 # Connect to Alchemy
 API = 'CeaJwmD8u0qcSnGwuKPwbN_jGryIlD61'
@@ -36,7 +38,10 @@ transactions = pd.concat(all_transactions)
 transactions.to_csv('nft_transactions_df.csv')
 
 #%%
-transactions = pd.read_csv('nft_transactions_df.csv') #transactions.reset_index(0)
+
+# ! DO LOUVAIN METHOD FOR DETECTING COMMUNITIES AS ADDITIONAL QUESTIONS 
+
+transactions = pd.read_csv('nft_transactions_df.csv') 
 
 df = transactions.merge(nft_collections, left_on='Unnamed: 0', right_on='Token')[['Token Name', 'asset', 'from', 'to', 'tokenId', 'blockNum']]
 
@@ -140,6 +145,7 @@ def plot_network_nft():
     #plt.legend(title="NFT Collections", loc='lower right')
 
     plt.title('Blockchain NFT Transaction Network')
+
     plt.axis('off')
     plt.show()
 

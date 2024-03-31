@@ -9,7 +9,7 @@ import matplotlib.patches as mpatches
 #%%
 to_network = pd.read_csv('final_crypto_punk_df.csv')
 to_network = to_network.sort_values('block_transac')
-#%%
+
 df = to_network.copy(deep=True)
 df = df.T.drop_duplicates().T
 n_nfts = df.groupby('from')['tokenId'].count()
@@ -51,7 +51,6 @@ node_size = []
 for node in G:
   # Assuming wallets and token IDs can be differentiated by their length
 
-
     if (G.in_degree(node) > G.out_degree(node)):
         color_map.append('cyan')
         node_size.append(((G.degree(node)) * 20 + 20))
@@ -62,8 +61,8 @@ for node in G:
         node_size.append(((G.degree(node)) * 20 + 20))        
     
     else:
-        col = list(plt.cm.hot(df.loc[df['to'] == node]['tokenId'].min() / df['tokenId'].max()))
-        col[-1] = 0.4
+        col = list(plt.cm.rainbow(df.loc[df['to'] == node]['tokenId'].min() / df['tokenId'].max()))
+        col[-1] = 0.5
 
               # Color for wallets
         color_map.append(col)
@@ -74,7 +73,7 @@ for node in G:
     
 
 # Prepare edge colors based on their 'time' attribute
-edge_colors = [plt.cm.hot(G[u][v][0]['token']) for u, v in G.edges()]
+edge_colors = [plt.cm.rainbow(G[u][v][0]['token']) for u, v in G.edges()]
 
 pos = nx.random_layout(G)
 
@@ -95,12 +94,18 @@ nx.draw(G, pos, edge_color=edge_colors,node_color=color_map, width=0.4, node_siz
 first_block = '2017-05-24'
 last_block = '2024-03-24'
 
-date_range = pd.date_range(start=first_block, end=last_block, periods=100).to_list()
+date_range = pd.date_range(start=first_block, end=last_block, periods=5).to_list()
 
 plt.title("CryptoPunk NFT Transactions Network")
 wallet_patch = mpatches.Patch(color='cyan', label='Collectors')
 nft_patch = mpatches.Patch(color='black', label='Resalers')
 plt.legend(handles=[wallet_patch, nft_patch], loc='upper left')
 
+# Annotations for the date range at the bottom of the plot
+
+for i in range(len(date_range)):
+    plt.annotate(str(date_range[i])[0:10], xy=(i/len(date_range) - 0.02, -0.1))
 
 plt.draw()
+
+# %%

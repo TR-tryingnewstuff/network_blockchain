@@ -61,26 +61,29 @@ df.to_parquet('reduced_crypto_punk_transaction.parquet', index=False)
 
 #%%
 df = pd.read_parquet('reduced_crypto_punk_transaction.parquet')
-
+df = df.drop_duplicates(subset=['ownerAddress', 'tokenId'])
 
 def get_nft_transaction_history(nft_id):
 
 
     curr_df = df.loc[df['tokenId'] == nft_id]
-    curr_df = curr_df.groupby('ownerAddress').first().reset_index()
+    #curr_df = curr_df.groupby('ownerAddress').first().reset_index()
 
 
     if len(curr_df) > 1:
         lagged = curr_df.shift(1)
 
         test = pd.concat([curr_df, lagged], axis=1)
-        test.columns = ['to', 'tokenId', 'block_transac', 'from', 'tokenId', 'block_prev']
-
+        test.columns = ['to', 'tokenId', 'block_transac', 'from', 'token_id','block_prev']
+        test.drop('token_id', axis=1)
         return test
         alls.append(test)
 
 res = Parallel(10, batch_size=20)(delayed(get_nft_transaction_history)(nft_id) for nft_id in df['tokenId'].unique().tolist())
-
+pd.concat(res)
 #%%
-to_network = pd.concat(res).dropna()
+to_network = pd.concat(res)
 to_network.to_csv('final_crypto_punk_df.csv')
+#%%
+
+df = pd.read_parquet('reduced_crypto_punk_transaction.parquet')

@@ -10,6 +10,7 @@ import regex as re
 from alchemy_sdk_py import Alchemy
 import matplotlib.pyplot as plt
 import networkx as nx
+import matplotlib.patches as mpatches
 
 #%%
 
@@ -105,6 +106,11 @@ pos = nx.kamada_kawai_layout(G)
 # Drawing the network
 plt.figure(figsize=(15, 12))
 nx.draw(G, pos, with_labels=True, labels=informative_labels, node_size=node_sizes, node_color=node_colors, edge_color='lightgray', font_size=8, font_weight='bold')
+
+wallet_patch = mpatches.Patch(color='orange', label='Users')
+nft_patch = mpatches.Patch(color='skyblue', label='Large Actors')
+plt.legend(handles=[wallet_patch, nft_patch], loc='upper left')
+
 
 plt.title('Blockchain Transaction Network')
 plt.axis('off')
